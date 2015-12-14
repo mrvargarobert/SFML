@@ -1,8 +1,8 @@
 #include "data.h"
 #include "util.h"
 
-#define RED 1
-#define MAXNRSAMPLES 2000000 //1e5
+const int RED = 1;
+const int MAXNRSAMPLES = (int)1e6; //1e5
 
 Data::Data(){
 	d = 0; l = 0; w = 0;
@@ -15,14 +15,9 @@ Data::~Data(){
 }
 
 void Data::loadData(const char* fname){
-	//std::ifstream in(fname, std::ifstream::ate | std::ifstream::binary);
-	//long int file_size = in.tellg();
-	//in.close();
-
-	FILE* f = fopen2(fname, "r");
-
-	//read training data from a csv file where the first column is the binary class label 1/-1
-	printf("\nLoading training data\n");
+	//read the data from a csv file where the first column is the binary class label 1/-1
+	FILE* f = fopen2(fname, "r");	
+	printf("\nLoading data from file\n");
 
 	//find nr of features by reading the first instance
 	long long nrfeatures = 0;
@@ -30,11 +25,13 @@ void Data::loadData(const char* fname){
 	fscanf(f, "%d", &lbl);
 	while (fscanf(f, ",%f", &tmp) == 1) 	nrfeatures++;
 	
+	//find the file size
 	fseek(f, 0, SEEK_END);
 	long long file_size = ftell(f);
 	//file_size = 7.5 * 1024 * 1024 * 1024;
 	rewind(f);
 
+	//allocate memory and set pointer
 	w = new T2[MAXNRSAMPLES];
 	l = new T[MAXNRSAMPLES];
 	d = new T[MAXNRSAMPLES*nrfeatures];
@@ -64,12 +61,15 @@ void Data::loadData(const char* fname){
 			fscanf(f, ",%f", descr++);
 		nrsamples++;
 		if (nrsamples % 100 == 0){
-			printf("\rsample index: %9d", nrsamples);
+#if 1
+			printf("\rsample index: %9d", nrsamples);			
+#else
 			//does not work for large files
-			/*long long progress = ftell(f);
+			long long progress = ftell(f);
 			if (file_size < progress)
 				file_size *= 1024L;
-			printf("\r %.2lf %%", progress*100.0 / file_size);*/
+			printf("\r %.2lf %%", progress*100.0 / file_size);
+#endif
 		}
 	}
 	fclose(f);
@@ -85,84 +85,19 @@ void Data::loadData(const char* fname){
 	//set fields and normalize weights
 	N = nrsamples;
 	M = nrfeatures;
-	// nrfeatures == (descr-data.d)/nrsamples; //debug assert
 	T2 iN = 1.0 / N;
 	for (int i = 0; i<N; i++)
 		w[i] *= iN;
 
-#if 0
-	FILE* ff = fopen("d:\\imgdb\\stereo_pairs\\zzzz_zz_zz_classifier\\debug_txt.txt","w");
-	for (long long u = 0; u < N*M; u++)
-		fprintf(ff, "%f\n", d[u]);
-	fclose(ff);
-#endif
+	//check format
+	if (nrfeatures != (descr - d) / nrsamples){
+		printf("Incorrect format\n");
+		return;
+	}
 }
 
 void Data::loadSparseData(const char* fname, int nrfeatures){
-	return; //not working yet
-	FILE* f = fopen2(fname, "r");
-
-	//read training data from a csv file where the first column is the binary class label 1/-1
-	printf("Loading sparse training data\n");
-
-	fseek(f, 0, SEEK_END);
-	int file_size = ftell(f);
-	rewind(f);
-	
-	w = new T2[MAXNRSAMPLES];
-	l = new T[MAXNRSAMPLES];
-	d = new T[MAXNRSAMPLES*nrfeatures];
-	T* descr = d;
-
-	int nrsamples = 0;
-
-	const T2 POSW = 1.0;
-	int lbl = 0;
-	//read the training data while there are training samples
-	while (nrsamples<MAXNRSAMPLES)
-	{
-		if (fscanf(f, "%d\t", &lbl) < 1 || lbl == 0)
-			break;
-
-		if (lbl == 1){
-			w[nrsamples] = POSW;
-			l[nrsamples] = 1;
-		}
-		else{
-			w[nrsamples] = 1;
-			l[nrsamples] = -1;
-		}
-
-		int index=0;
-		T value=0;
-		memset(descr, 0, nrfeatures*sizeof(T));
-		while (1)
-		{
-			if (fscanf(f, "%d:%f", &index, &value) < 2) break;
-			descr[index] = value;
-		}
-		nrsamples++;
-		descr += nrfeatures;
-
-		if (nrsamples % 100)
-			printf("\r %.2f %%", ftell(f)*100.f / file_size);
-	}
-	fclose(f);
-	printf("\nDone.\n"); if (nrsamples == MAXNRSAMPLES) printf("Stopping prematurely (%d)\n", nrsamples);
-
-	if (nrsamples > 65535 && sizeof(T3) == 2){
-		printf("Error, nrsamples=%d is larger than T3 type can handle (65535)\n", nrsamples);
-		getch();
-		exit(-2);
-	}
-
-	//set fields and normalize weights
-	N = nrsamples;
-	M = nrfeatures;
-	// nrfeatures == (descr-data.d)/nrsamples; //debug assert
-	T iN = 1.f / N;
-	for (int i = 0; i<N; i++)
-		w[i] *= iN;
+	return; //not implemented 
 }
 
 void Data::loadDataBinary(const char* fname, int dim){

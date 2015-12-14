@@ -10,7 +10,7 @@ FILE* fopen2(const char* fname, char* mode){
 	return f;
 }
 
-/*
+
 #define PRINT_TIME 1
 
 Timer::Timer():Timer(""){	
@@ -45,6 +45,7 @@ double Timer::toc(int nrtimes){
 	return elapsed;
 }
 
+/*
 void getTime(char* ttime){
 	char days[7][20] = {
 		"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"

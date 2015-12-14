@@ -11,14 +11,15 @@ private:
 	char str[256];
 public:
 	Timer();
-	//Timer(char* str);
+	Timer(char* str);
 	void tic();	/**< Start timer. */
 	void tic(char* str); /**< Start timer with label. */
 	double toc(int nrtimes = 1); /**< Print time measurement, optionally divide by nrtimes (when calculating average). */
 };
 
+#if 0
 #pragma once
-
+/*
 class PerformanceTimer
 {
 private:
@@ -61,3 +62,4 @@ template<class T> struct Mat{
 		if (data) delete[] data;
 	}
 };
+#endif

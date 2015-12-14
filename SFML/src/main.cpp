@@ -1,16 +1,42 @@
 #include "data.h"
-
+#include "util.h"
+#include "boosting.h"
 
 int main(){
+	//if separate training and test set is available
+#if 0
+	//train classifier on the training set
+	Data* d = new Data();
+	d->loadData("..\\data\\adult_train_num.csv");
+	Timer t;	
+	t.tic("Classifier training");
+	Classifier* c = new Boosting(15);
+	c->setData(d);
+	c->train();
+	t.toc();
+	delete d;
 	
-	FILE * f = fopen("test_file.csv", "w");
-	for (int i = 0; i < 100; i++) {
-		fprintf(f, "\n");
-		for (int j = 0; j < 361; j++)
-			fprintf(f, "%d ", i);
-	}
-	 fclose(f);
-	 Data d = Data();
-	 d.loadData("test_file.csv");
-	 return 0;
+	//test the classifier on the test set
+	d->loadData("..\\data\\adult_test_num.csv");
+	t.tic("Classifier testing");
+	float err = c->calcError();
+	printf("test set error = %f\n", err);
+	t.toc();
+#else
+	//if a single set is available
+
+	Data* d = new Data();
+	//d->loadData("..\\data\\wdbc.csv");
+	//d->loadData("..\\data\\pima-indians-diabetes.csv");
+	d->loadData("..\\data\\skin_nonskin.csv");
+	Timer t;
+	t.tic("Classifier crossvalidation");
+	Classifier* c = new Boosting(100);
+	c->setData(d);
+	const int nrfolds = 10;
+	float* errs = new float[nrfolds];
+	c->crossvalidation(nrfolds, errs);
+	t.toc();
+	delete[] errs;
+#endif
 }

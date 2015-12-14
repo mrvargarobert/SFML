@@ -79,7 +79,7 @@ T Classifier::randsplit(float trainpercent){
 T Classifier::crossvalidation(int nfold, T* errs){
 	//data must be loaded previously
 	T erravg = 0;
-	if (!data->d || !data->l) return erravg;
+	if (!data || !data->d || !data->l) return erravg;
 
 	const int MM = data->N / nfold;
 	int* b = new int[data->N];
