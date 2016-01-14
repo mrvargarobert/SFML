@@ -1,6 +1,7 @@
 #include "data.h"
 #include "util.h"
 #include "boosting.h"
+#include "knn.h"
 
 int main(){
 	//if separate training and test set is available
