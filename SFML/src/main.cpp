@@ -1,6 +1,8 @@
 #include "data.h"
 #include "util.h"
 #include "boosting.h"
+#include "knn.h"
+#include "bayes.h"
 
 int main(){
 	//if separate training and test set is available
@@ -26,12 +28,15 @@ int main(){
 	//if a single set is available
 
 	Data* d = new Data();
+	//d->loadData("..\\data\\wdbc.csv");
 	d->loadData("..\\data\\wdbc.csv");
-	//d->loadData("..\\data\\pima-indians-diabetes.csv");
+	d->loadData("..\\data\\pima-indians-diabetes.csv");
 	//d->loadData("..\\data\\skin_nonskin.csv");
 	Timer t;
 	t.tic("Classifier crossvalidation");
-	Classifier* c = new Boosting(100);
+	//Classifier* c = new Boosting(100);
+	//Classifier* c = new Knn(71);
+	Classifier* c = new Bayes();
 	c->setData(d);
 	const int nrfolds = 10;
 	float* errs = new float[nrfolds];

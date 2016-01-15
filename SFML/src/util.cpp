@@ -13,7 +13,7 @@ FILE* fopen2(const char* fname, char* mode){
 
 #define PRINT_TIME 1
 
-Timer::Timer():Timer(""){	
+Timer::Timer(){	
 }
 Timer::Timer(char* str2){
 	strcpy(str, str2);
