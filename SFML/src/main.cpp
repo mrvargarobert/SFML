@@ -26,9 +26,9 @@ int main(){
 	//if a single set is available
 
 	Data* d = new Data();
-	//d->loadData("..\\data\\wdbc.csv");
+	d->loadData("..\\data\\wdbc.csv");
 	//d->loadData("..\\data\\pima-indians-diabetes.csv");
-	d->loadData("..\\data\\skin_nonskin.csv");
+	//d->loadData("..\\data\\skin_nonskin.csv");
 	Timer t;
 	t.tic("Classifier crossvalidation");
 	Classifier* c = new Boosting(100);
